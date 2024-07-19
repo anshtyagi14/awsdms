@@ -59,35 +59,57 @@ Cross-region disaster recovery (DR) is crucial for ensuring high availability an
 
 ### Step 2 - RDS Preparation
 
-In the AWS Management Console, create an RDS instance in the eu-west-2 region using the same instance configuration as the one in us-west-2.
+1. In the AWS Management Console, create an RDS instance in the eu-west-2 region using the same instance configuration as the one in us-west-2.
 
-Same instance configuration RDS in different region
+<img src="src/008.png"/>
 
-Create a database parameter group for both RDS instances, modify the binlog_format parameter to ROW within these groups.
+<p align="center"> Same instance configuration RDS in different region </p>
 
-Create parameter group
+2. Create a database parameter group for both RDS instances, modify the binlog_format parameter to ROW within these groups.
 
-Create parameter group process
+<img src="src/009.png"/>
 
-Select the parameter group just created
+<p align="center"> Create parameter group </p>
 
-Edit the parameter group
+<img src="src/010.png"/>
 
-Search for the binlog_format parameter and modify it to ROW and Save Changes
+<p align="center"> Create parameter group process </p>
 
-For each RDS instance in both the us-west-2 and eu-west-2 regions, attach the newly created parameter group.
+<img src="src/011.png"/>
 
-Select the instance and click on Modify
+<p align="center"> Select the parameter group just created </p>
 
-Choose the newly created DB parameter group in the list and click continue
+<img src="src/012.png"/>
 
-Select Apply immediately and click Modify DB Instance to complete the process
+<p align="center"> Edit the parameter group </p>
 
-Warning
+<img src="src/013.png"/>
 
-Verify that binary logging is enabled and that each RDS instance has a unique server_id. This can be confirmed by executing the queries SHOW VARIABLES LIKE 'log_bin'; to check if log_bin is set to 'ON', and SHOW VARIABLES LIKE 'server_id'; to ensure that the server_id differs across the instances. Run these queries within your database management tool.
+<p align="center"> Search for the binlog_format parameter and modify it to ROW and Save Changes </p>
 
-Verifying through SQLECTRON
+3. For each RDS instance in both the us-west-2 and eu-west-2 regions, attach the newly created parameter group.
+
+<img src="src/014.png"/>
+
+<p align="center"> Select the instance and click on Modify </p>
+
+<img src="src/015.png"/>
+
+<p align="center"> Choose the newly created DB parameter group in the list and click continue </p>
+
+<img src="src/016.png"/>
+
+<p align="center"> Select Apply immediately and click Modify DB Instance to complete the process </p>
+
+| Warning |
+| --- |
+| Verify that binary logging is enabled and that each RDS instance has a unique server_id. This can be confirmed by executing the queries SHOW VARIABLES LIKE 'log_bin'; to check if log_bin is set to 'ON', and SHOW VARIABLES LIKE 'server_id'; to ensure that the server_id differs across the instances. Run these queries within your database management tool.
+
+<img src="src/018a.png"/>
+
+<p align="center"> Verifying through SQLECTRON </p>
+
+|
 
 
 
