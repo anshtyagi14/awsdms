@@ -103,59 +103,66 @@ Cross-region disaster recovery (DR) is crucial for ensuring high availability an
 
 | Warning |
 | --- |
-| Verify that binary logging is enabled and that each RDS instance has a unique server_id. This can be confirmed by executing the queries SHOW VARIABLES LIKE 'log_bin'; to check if log_bin is set to 'ON', and SHOW VARIABLES LIKE 'server_id'; to ensure that the server_id differs across the instances. Run these queries within your database management tool.
+| Verify that binary logging is enabled and that each RDS instance has a unique server_id. This can be confirmed by executing the queries SHOW VARIABLES LIKE 'log_bin'; to check if log_bin is set to 'ON', and SHOW VARIABLES LIKE 'server_id'; to ensure that the server_id differs across the instances. Run these queries within your database management tool. |
 
 <img src="src/018a.png"/>
 
 <p align="center"> Verifying through SQLECTRON </p>
 
-|
-
-
-
 ### Step 3 - AWS DMS
 
-Navigate to AWS DMS in the AWS Management Console. In the left navigation panel, select "Replication Instances" and then click on "Create Replication Instance."
+1. Navigate to AWS DMS in the AWS Management Console. In the left navigation panel, select "Replication Instances" and then click on "Create Replication Instance."
 
- Create replication instance
+<img src="src/018.png"/>
 
-Enter the replication instance name, choose the instance class and engine version, set High Availability to "Single-AZ," select the appropriate VPC, replication subnet group, and security group. Finally, click "Create Replication Instance."
+<p align="center"> Create replication instance </p>
 
-Create replication instance process
+2. Enter the replication instance name, choose the instance class and engine version, set High Availability to "Single-AZ," select the appropriate VPC, replication subnet group, and security group. Finally, click "Create Replication Instance."
 
-Return to AWS DMS and select "Endpoints" from the left navigation panel, then click "Create Endpoint."
+<img src="src/019.png"/>
 
-Create endpoint
+<p align="center"> Create replication instance process </p>
 
-For the source endpoint, provide the endpoint identifier using the RDS name, select the source engine matching the RDS, choose "Provide information manually," and then enter the RDS endpoint as the server name, along with the port, username, and password. Select the VPC and the replication instance, then click "Run Test." Wait until the status shows "Successful," then click "Create Endpoint."
+3. Return to AWS DMS and select "Endpoints" from the left navigation panel, then click "Create Endpoint."
 
-Create endpoint process
+<img src="src/020.png"/>
 
-Repeat step 4 to create the target endpoint, ensuring to specify the RDS details for the region eu-west-2.
+<p align="center"> Create endpoint </p>
 
-Return to the AWS DMS dashboard and select "Database Migration Tasks" from the left panel. Click "Create Task" in the top right corner.
+4. For the source endpoint, provide the endpoint identifier using the RDS name, select the source engine matching the RDS, choose "Provide information manually," and then enter the RDS endpoint as the server name, along with the port, username, and password. Select the VPC and the replication instance, then click "Run Test." Wait until the status shows "Successful," then click "Create Endpoint."
 
-Create task
+<img src="src/021.png"/>
 
-Provide a task identifier as the task name. Select the replication instance, source database endpoint, and target database endpoint created in steps 2, 4, and 5. Set the migration type to "Migrate existing data and replicate ongoing changes." Under table mappings, click "Add new selection rule." For the schema, enter the schema name, specify the source database name from which you want to replicate data, and for the source table name, specify the table you wish to replicate. Set “Start migration task” to "Manually later" and then click "Create Task."
+<p align="center"> Create endpoint process </p>
 
-Create database migration task process
+5. Repeat step 4 to create the target endpoint, ensuring to specify the RDS details for the region eu-west-2.
 
-Note
+6. Return to the AWS DMS dashboard and select "Database Migration Tasks" from the left panel. Click "Create Task" in the top right corner.
 
-If you need to migrate all databases and tables from one RDS instance to another, use the '%' wildcard in both the source database name and source table name fields to include everything. If only specific patterns of databases and tables are to be migrated, append the pattern with '_%'.
+<img src="src/022.png"/>
 
-For example, if your databases are named mydb_01, mydb_02, and mydb_03, use 'mydb_%' to migrate all databases following this naming convention. Similarly, if the tables are named table_01, table_02, and table_03, use 'table_%' to include all corresponding tables in the migration.
+<p align="center"> Create task </p>
 
+7. Provide a task identifier as the task name. Select the replication instance, source database endpoint, and target database endpoint created in steps 2, 4, and 5. Set the migration type to "Migrate existing data and replicate ongoing changes." Under table mappings, click "Add new selection rule." For the schema, enter the schema name, specify the source database name from which you want to replicate data, and for the source table name, specify the table you wish to replicate. Set “Start migration task” to "Manually later" and then click "Create Task."
 
+<img src="src/023.png"/>
 
-Select the database migration task you just created, go to "Actions," and choose "Resume/Restart" to start the task.
+<p align="center"> Create database migration task process </p>
 
-Start the task just created
+| Note |
+| --- |
+| If you need to migrate all databases and tables from one RDS instance to another, use the '%' wildcard in both the source database name and source table name fields to include everything. If only specific patterns of databases and tables are to be migrated, append the pattern with '_%'. |
+| For example, if your databases are named mydb_01, mydb_02, and mydb_03, use 'mydb_%' to migrate all databases following this naming convention. Similarly, if the tables are named table_01, table_02, and table_03, use 'table_%' to include all corresponding tables in the migration. |
 
-Success
+8. Select the database migration task you just created, go to "Actions," and choose "Resume/Restart" to start the task.
 
-This process will initially move the database and tables specified in the selection rule and will then continue to replicate the data.
+<img src="src/024.png"/>
+
+<p align="center"> Start the task just created </p>
+
+| Success |
+| --- |
+| This process will initially move the database and tables specified in the selection rule and will then continue to replicate the data. |
 
 ## Costing
 
