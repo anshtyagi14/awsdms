@@ -4,11 +4,11 @@ Architecture diagram of the AWS RDS disaster recovery
 
 AWS Data Migration Service working
 
-Context
+## Context
 
 Cross-region disaster recovery (DR) is crucial for ensuring high availability and data durability across geographically dispersed data center's. Utilising AWS DMS and RDS MySQL enhances fault tolerance by replicating databases between AWS regions.
 
-Requirement
+## Requirement
 
 Establish a disaster recovery system between two AWS regions (us-west-2 and eu-west-2).
 
@@ -16,9 +16,9 @@ Use AWS DMS for data replication and AWS RDS MySQL for database management.
 
 Maintain a real-time data sync with minimal downtime and data loss.
 
-Steps
+## Steps
 
-Step 1 - VPC Peering
+### Step 1 - VPC Peering
 
 Warning
 
@@ -44,7 +44,7 @@ For both VPCs in us-west-2 and eu-west-2, go to the "Route Tables" section, edit
 
 Route table of us-west-2 region
 
-Step 2 - RDS Preparation
+### Step 2 - RDS Preparation
 
 In the AWS Management Console, create an RDS instance in the eu-west-2 region using the same instance configuration as the one in us-west-2.
 
@@ -78,7 +78,7 @@ Verifying through SQLECTRON
 
 
 
-Step 3 - AWS DMS
+### Step 3 - AWS DMS
 
 Navigate to AWS DMS in the AWS Management Console. In the left navigation panel, select "Replication Instances" and then click on "Create Replication Instance."
 
@@ -122,39 +122,31 @@ Success
 
 This process will initially move the database and tables specified in the selection rule and will then continue to replicate the data.
 
-Costing
+## Costing
 
-AWS DMS and RDS costs depend on instance types, storage, and data transfer volumes.
+- AWS DMS and RDS costs depend on instance types, storage, and data transfer volumes.
+- Costing should include the price of cross-region data transfers and additional instances for replication.
+- Implementing a pilot light or warm standby approach may reduce costs compared to a multi-site approach.
 
-Costing should include the price of cross-region data transfers and additional instances for replication.
+## RTO and RPO 
 
-Implementing a pilot light or warm standby approach may reduce costs compared to a multi-site approach.
+- RTO: Targeted at less than 1 hour, depending on the complexity of the application recovery process.
+- RPO: Aim for near-zero data loss by maintaining continuous replication.
 
-RTO and RPO 
+## Limitations
 
-RTO: Targeted at less than 1 hour, depending on the complexity of the application recovery process.
+- Overlapping CIDR blocks in VPC peering can block the setup.
+- Data transfer speeds and latency between regions can affect synchronisation.
+- Binary logging in MySQL increases storage requirements and may impact performance.
 
-RPO: Aim for near-zero data loss by maintaining continuous replication.
+## Monitoring
 
-Limitations
+- Use AWS CloudWatch for monitoring database and replication instance metrics.
+- Set alarms for replication failures, high latency, or excessive read/write loads.
+- Regularly check the health of VPC peering connections and database instances.
 
-Overlapping CIDR blocks in VPC peering can block the setup.
+## Consequences
 
-Data transfer speeds and latency between regions can affect synchronisation.
-
-Binary logging in MySQL increases storage requirements and may impact performance.
-
-Monitoring
-
-Use AWS CloudWatch for monitoring database and replication instance metrics.
-
-Set alarms for replication failures, high latency, or excessive read/write loads.
-
-Regularly check the health of VPC peering connections and database instances.
-
-Consequences
-
-Failure in setting up or maintaining the disaster recovery process can lead to data loss or unavailability during regional AWS outages.
-
-Improper configuration might result in excessive charges or performance degradation.
+- Failure in setting up or maintaining the disaster recovery process can lead to data loss or unavailability during regional AWS outages.
+- Improper configuration might result in excessive charges or performance degradation.
 
