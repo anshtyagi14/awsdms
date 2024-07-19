@@ -1,8 +1,13 @@
 # Implement cross-region disaster recovery with AWS DMS and AWS RDS MySQL
 
-Architecture diagram of the AWS RDS disaster recovery
+<img src="src/001.png"/>
 
-AWS Data Migration Service working
+<p align="center"> Architecture diagram of the AWS RDS disaster recovery </p>
+
+
+<img src="src/002.png"/>
+
+<p align="center"> AWS Data Migration Service working </p>
 
 ## Context
 
@@ -10,39 +15,47 @@ Cross-region disaster recovery (DR) is crucial for ensuring high availability an
 
 ## Requirement
 
-Establish a disaster recovery system between two AWS regions (us-west-2 and eu-west-2).
-
-Use AWS DMS for data replication and AWS RDS MySQL for database management.
-
-Maintain a real-time data sync with minimal downtime and data loss.
+- Establish a disaster recovery system between two AWS regions (us-west-2 and eu-west-2).
+- Use AWS DMS for data replication and AWS RDS MySQL for database management.
+- Maintain a real-time data sync with minimal downtime and data loss.
 
 ## Steps
 
 ### Step 1 - VPC Peering
 
-Warning
+| Warning |
+| --- |
+| Before initiating a VPC peering connection, ensure that the CIDR blocks of both VPCs in the us-west-2 and eu-west-2 regions do not overlap. This check is crucial for enabling AWS DMS connectivity with RDS in the eu-west-2 region. |
 
-Before initiating a VPC peering connection, ensure that the CIDR blocks of both VPCs in the us-west-2 and eu-west-2 regions do not overlap. This check is crucial for enabling AWS DMS connectivity with RDS in the eu-west-2 region.
+1. Log into the AWS Management Console, navigate to the VPC dashboard in the us-west-2 region.
 
-Log into the AWS Management Console, navigate to the VPC dashboard in the us-west-2 region.
+<img src="src/003.png"/>
 
-AWS Management Console
+<p align="center"> AWS Management Console </p>
 
-Select "Peering Connections" from the left navigation panel and click "Create Peering Connection" at the top right.
+2. Select "Peering Connections" from the left navigation panel and click "Create Peering Connection" at the top right.
 
-Peering connections dashboard
+<img src="src/004.png"/>
 
-Enter a name for the peering connection, under the VPC (Requester) section, select the VPC ID and choose "My account" and "Another region", specify the VPC ID (Accepter) located in the eu-west-2 region, click "Create Peering Connection".
+<p align="center"> Peering connections dashboard </p>
 
-Create peering connection process
+3. Enter a name for the peering connection, under the VPC (Requester) section, select the VPC ID and choose "My account" and "Another region", specify the VPC ID (Accepter) located in the eu-west-2 region, click "Create Peering Connection".
 
-Switch to the AWS Management Console for the eu-west-2 region, under "Peering Connections", locate the pending request and select "Accept Request", confirm the acceptance to establish the peering connection.
+<img src="src/005.png"/>
 
-Accepting peering connection request
+<p align="center"> Create peering connection process </p>
 
-For both VPCs in us-west-2 and eu-west-2, go to the "Route Tables" section, edit the public route table: add the opposite VPC’s CIDR block as the destination and the newly created peering connection ID as the target.
+4. Switch to the AWS Management Console for the eu-west-2 region, under "Peering Connections", locate the pending request and select "Accept Request", confirm the acceptance to establish the peering connection.
 
-Route table of us-west-2 region
+<img src="src/006.png"/>
+
+<p align="center"> Accepting peering connection request </p>
+
+5. For both VPCs in us-west-2 and eu-west-2, go to the "Route Tables" section, edit the public route table: add the opposite VPC’s CIDR block as the destination and the newly created peering connection ID as the target.
+
+<img src="src/007.png"/>
+
+<p align="center"> Route table of us-west-2 region </p>
 
 ### Step 2 - RDS Preparation
 
